@@ -1,0 +1,31 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+
+local function toggle_screen(target_screen, current_screen)
+  msg.post(target_screen, target_screen == current_screen and constants.ENABLE or constants.DISABLE)
+end
+
+function init()
+  msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
+
+  msg.post("main_menu", constants.ENABLE)
+  msg.post("settings_menu", constants.DISABLE)
+end
+
+function final()
+  msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function on_message(_, message_id, message)
+  if message_id == constants.SWITCH_SCREEN then
+    toggle_screen("main_menu", message.screen)
+    toggle_screen("settings_menu", message.screen)
+  end
+end
+
+function on_input(_, action_id, action)
+  if action_id == constants.TOGGLE_DEBUG and action.released then
+    msg.post("@system:", constants.TOGGLE_PROFILE)
+  end
+end

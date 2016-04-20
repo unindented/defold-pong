@@ -1,2 +1,36 @@
 name: "main"
-scale_along_z: 0
+instances {
+  id: "controller"
+  prototype: "/main/controller.go"
+  position {
+    x: 400.0
+    y: 225.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "main_menu"
+  prototype: "/menus/main_menu.go"
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
+instances {
+  id: "settings_menu"
+  prototype: "/menus/settings_menu.go"
+  position {
+    x: 400.0
+    y: 225.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}

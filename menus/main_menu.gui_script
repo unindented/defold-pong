@@ -1,0 +1,39 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+
+local title_text = string.upper(sys.get_config("project.title"))
+local version_text = "V" .. sys.get_config("project.version")
+local play_text = "PLAY"
+local settings_text = "SETTINGS"
+
+function init(self)
+  msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
+
+  self.title_node = gui.get_node("title/text")
+  self.version_node = gui.get_node("version/text")
+  self.play_node = gui.get_node("play/text")
+  self.settings_node = gui.get_node("settings/text")
+
+  gui.set_text(self.title_node, title_text)
+  gui.set_text(self.version_node, version_text)
+  gui.set_text(self.play_node, play_text)
+  gui.set_text(self.settings_node, settings_text)
+end
+
+function final()
+  msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function on_input(self, action_id, action)
+  if action_id == constants.CLICK and action.pressed then
+    local x = action.x
+    local y = action.y
+
+    if gui.pick_node(self.play_node, x, y) then
+      print("PLAY")
+    elseif gui.pick_node(self.settings_node, x, y) then
+      msg.post("controller", constants.SWITCH_SCREEN, {screen = "settings_menu"})
+    end
+  end
+end
