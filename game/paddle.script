@@ -1,0 +1,62 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+
+local function reset_correction(self)
+  self.correction.x = 0
+  self.correction.y = 0
+end
+
+local function reset_velocity(self)
+  self.velocity.x = 0
+  self.velocity.y = 0
+end
+
+local function resolve_collision(self, message)
+  local proj = vmath.project(self.correction, message.normal * message.distance)
+  if proj < 1 then
+    -- Calculate correction.
+    local comp = (message.distance - message.distance * proj) * message.normal
+    self.correction = self.correction + comp
+  end
+end
+
+function init(self)
+  msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
+
+  self.velocity = vmath.vector3()
+  self.correction = vmath.vector3()
+end
+
+function final()
+  msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function update(self, dt)
+  local disp = self.velocity * constants.PADDLE_SPEED * dt
+  go.set_position(go.get_position() + disp + self.correction)
+
+  reset_correction(self)
+  reset_velocity(self)
+end
+
+function on_message(self, message_id, message)
+  if message_id == constants.CONTACT_POINT_RESPONSE
+  and message.distance > 0
+  and (message.other_id == constants.WALL_TOP or message.other_id == constants.WALL_BOTTOM) then
+    -- Resolve paddle collision with walls.
+    resolve_collision(self, message)
+  end
+end
+
+function on_input(self, action_id)
+  local id = go.get_id()
+  if (id == constants.PADDLE_LEFT and action_id == constants.PADDLE_LEFT_UP)
+  or (id == constants.PADDLE_RIGHT and action_id == constants.PADDLE_RIGHT_UP) then
+    self.velocity.y = self.velocity.y + 1
+  end
+  if (id == constants.PADDLE_LEFT and action_id == constants.PADDLE_LEFT_DOWN)
+  or (id == constants.PADDLE_RIGHT and action_id == constants.PADDLE_RIGHT_DOWN) then
+    self.velocity.y = self.velocity.y - 1
+  end
+end

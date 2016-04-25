@@ -12,12 +12,22 @@ local function transition_out_screen(_, _, from)
   return fsm.DEFERRED
 end
 
+local function load_proxy(_, _, _, to)
+  msg.post("#" .. to, constants.LOAD)
+end
+
+local function unload_proxy(_, _, from)
+  msg.post("#" .. from, constants.UNLOAD)
+end
+
 local function create_navigation()
   return fsm.create({
     initial = {state = "main_menu", event = "show_main_menu", defer = true},
     events = {
       {name = "show_main_menu",     from = "*",             to = "main_menu"    },
       {name = "show_settings_menu", from = "*",             to = "settings_menu"},
+      {name = "show_game",          from = "*",             to = "game"         },
+      {name = "back",               from = "game",          to = "main_menu"    },
       {name = "back",               from = "settings_menu", to = "main_menu"    },
       {name = "back",               from = "main_menu"                          }
     },
@@ -25,7 +35,9 @@ local function create_navigation()
       on_enter_main_menu     = transition_in_screen,
       on_leave_main_menu     = transition_out_screen,
       on_enter_settings_menu = transition_in_screen,
-      on_leave_settings_menu = transition_out_screen
+      on_leave_settings_menu = transition_out_screen,
+      on_enter_game          = load_proxy,
+      on_leave_game          = unload_proxy
     }
   })
 end
@@ -48,7 +60,7 @@ function final()
   msg.post(".", constants.RELEASE_INPUT_FOCUS)
 end
 
-function on_message(self, message_id, message)
+function on_message(self, message_id, message, sender)
   if message_id == constants.SWITCH_SCREEN then
     if not self.navigation.is_pending() then
       self.navigation["show_" .. message.screen]()
@@ -57,6 +69,8 @@ function on_message(self, message_id, message)
     if self.navigation.is_pending() then
       self.navigation.confirm()
     end
+  elseif message_id == constants.PROXY_LOADED then
+    msg.post(sender, constants.ENABLE)
   end
 end
 

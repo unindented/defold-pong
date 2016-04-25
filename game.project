@@ -15,6 +15,7 @@ height = 450
 
 [physics]
 scale = 0.02
+debug = 0
 
 [script]
 shared_state = 1
@@ -49,3 +50,4 @@ app_icon_96x96 = /resources/android/app_icon_xhdpi.png
 app_icon_144x144 = /resources/android/app_icon_xxhdpi.png
 app_icon_192x192 = /resources/android/app_icon_xxxhdpi.png
 manifest = /resources/android/AndroidManifest.xml
+

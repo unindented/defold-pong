@@ -60,7 +60,7 @@ function on_input(self, action_id, action)
     local y = action.y
 
     if gui.pick_node(self.play_node, x, y) then
-      print("PLAY")
+      msg.post("controller", constants.SWITCH_SCREEN, {screen = "game"})
     elseif gui.pick_node(self.settings_node, x, y) then
       msg.post("controller", constants.SWITCH_SCREEN, {screen = "settings_menu"})
     end

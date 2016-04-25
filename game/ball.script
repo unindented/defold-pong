@@ -1,0 +1,79 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+local random = require "shared.random"
+local timer = require "shared.timer"
+
+local function center()
+  go.set_position(constants.SCREEN_CENTER)
+end
+
+local function reset_correction(self)
+  self.correction.x = 0
+  self.correction.y = 0
+end
+
+local function reset_velocity(self)
+  self.velocity.x = 0
+  self.velocity.y = 0
+end
+
+local function reset(self, direction)
+  center(self)
+  reset_correction(self)
+  reset_velocity(self)
+
+  timer.seconds(constants.RESET_DELAY, function ()
+    direction = direction or (random.boolean() and constants.LEFT_UNIT or constants.RIGHT_UNIT)
+    self.velocity = random.direction(direction, constants.RESET_ANGLE)
+  end)
+end
+
+local function resolve_collision(self, message)
+  local proj = vmath.project(self.correction, message.normal * message.distance)
+  if proj < 1 then
+    -- Calculate correction.
+    local comp = (message.distance - message.distance * proj) * message.normal
+    self.correction = self.correction + comp
+    -- Reflect velocity.
+    local refl = 2 * vmath.dot(self.velocity, message.normal) * message.normal
+    self.velocity = self.velocity - refl
+    -- Increase velocity when ball collides with paddles.
+    if message.other_id == constants.PADDLE_LEFT
+    or message.other_id == constants.PADDLE_RIGHT then
+      self.velocity = self.velocity * constants.BALL_ACCELERATION
+    end
+  end
+end
+
+function init(self)
+  self.correction = vmath.vector3()
+  self.velocity = vmath.vector3()
+
+  reset(self)
+end
+
+function update(self, dt)
+  local disp = self.velocity * constants.BALL_SPEED * dt
+  go.set_position(go.get_position() + disp + self.correction)
+
+  reset_correction(self)
+
+  timer.update(dt)
+end
+
+function on_message(self, message_id, message)
+  if message_id == constants.TRIGGER_RESPONSE
+  and message.enter then
+    -- Player scored, so reset the ball.
+    if message.other_id == constants.TRIGGER_LEFT then
+      reset(self, constants.LEFT_UNIT)
+    elseif message.other_id == constants.TRIGGER_RIGHT then
+      reset(self, constants.RIGHT_UNIT)
+    end
+  elseif message_id == constants.CONTACT_POINT_RESPONSE
+  and message.distance > 0 then
+    -- Resolve ball collision with paddles or walls.
+    resolve_collision(self, message)
+  end
+end

@@ -1,0 +1,15 @@
+images {
+  image: "/resources/ball.png"
+}
+images {
+  image: "/resources/paddle.png"
+}
+images {
+  image: "/resources/wall.png"
+}
+images {
+  image: "/resources/net.png"
+}
+margin: 2
+extrude_borders: 0
+inner_padding: 0

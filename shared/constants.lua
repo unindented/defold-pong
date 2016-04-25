@@ -66,10 +66,37 @@ M.TRANSITION_IN       = hash("transition_in")
 M.TRANSITION_OUT      = hash("transition_out")
 M.TRANSITION_FINISHED = hash("transition_finished")
 
+-- IDs.
+M.BALL          = hash("/ball")
+M.PADDLE_LEFT   = hash("/paddle_left")
+M.PADDLE_RIGHT  = hash("/paddle_right")
+M.TRIGGER_LEFT  = hash("/trigger_left")
+M.TRIGGER_RIGHT = hash("/trigger_right")
+M.WALL_BOTTOM   = hash("/wall_bottom")
+M.WALL_TOP      = hash("/wall_top")
+
 -- Input.
-M.BACK         = hash("back")
-M.CLICK        = hash("click")
-M.TOGGLE_DEBUG = hash("toggle_debug")
+M.BACK              = hash("back")
+M.CLICK             = hash("click")
+M.PADDLE_LEFT_UP    = hash("paddle_left_up")
+M.PADDLE_LEFT_DOWN  = hash("paddle_left_down")
+M.PADDLE_RIGHT_UP   = hash("paddle_right_up")
+M.PADDLE_RIGHT_DOWN = hash("paddle_right_down")
+M.TOGGLE_DEBUG      = hash("toggle_debug")
+
+-- Config.
+M.BALL_SPEED        = 200
+M.BALL_ACCELERATION = 1.1
+M.PADDLE_SPEED      = 160
+M.RESET_ANGLE       = math.pi / 4
+M.RESET_DELAY       = 1.5
+
+-- Misc.
+M.LEFT_UNIT     = vmath.vector3(-1, 0, 0)
+M.RIGHT_UNIT    = vmath.vector3(1, 0, 0)
+M.SCREEN_WIDTH  = tonumber(sys.get_config("display.width"))
+M.SCREEN_HEIGHT = tonumber(sys.get_config("display.height"))
+M.SCREEN_CENTER = vmath.vector3(M.SCREEN_WIDTH / 2, M.SCREEN_HEIGHT / 2, 0)
 
 -- Lock all the things.
 local locked = {

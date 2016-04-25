@@ -1,0 +1,35 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+local animations = require "shared.animations"
+
+local function transition_in()
+  msg.post(".", constants.ENABLE)
+  animations.go_fade_in("wall_top#sprite", 0.1)
+  animations.go_fade_in("wall_bottom#sprite", 0.2)
+  animations.go_bounce_in("paddle_left#sprite", 0.3)
+  animations.go_bounce_in("paddle_right#sprite", 0.4)
+  animations.go_bounce_in("ball#sprite", 0.5)
+end
+
+local function transition_out()
+  animations.go_fade_out("wall_top#sprite", 0.1)
+  animations.go_fade_out("wall_bottom#sprite", 0.2)
+  animations.go_bounce_out("paddle_left#sprite", 0.3)
+  animations.go_bounce_out("paddle_right#sprite", 0.4)
+  animations.go_bounce_out("ball#sprite", 0.5, function ()
+    msg.post(".", constants.DISABLE)
+  end)
+end
+
+function init()
+  msg.post(".", constants.TRANSITION_IN)
+end
+
+function on_message(_, message_id)
+  if message_id == constants.TRANSITION_IN then
+    transition_in()
+  elseif message_id == constants.TRANSITION_OUT then
+    transition_out()
+  end
+end
