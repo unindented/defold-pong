@@ -1,11 +1,32 @@
 -- vi:filetype=lua
 
 local constants = require "shared.constants"
+local animations = require "shared.animations"
 
 local title_text = string.upper(sys.get_config("project.title"))
 local version_text = "V" .. sys.get_config("project.version")
 local play_text = "PLAY"
 local settings_text = "SETTINGS"
+
+local function transition_in(self)
+  msg.post(".", constants.ENABLE)
+  animations.gui_bounce_in(self.title_node, 0.1)
+  animations.gui_bounce_in(self.play_node, 0.6)
+  animations.gui_bounce_in(self.settings_node, 0.7)
+  animations.gui_bounce_in(self.version_node, 1, function ()
+    msg.post("controller", constants.TRANSITION_FINISHED)
+  end)
+end
+
+local function transition_out(self)
+  animations.gui_bounce_out(self.title_node, 0.1)
+  animations.gui_bounce_out(self.play_node, 0.1)
+  animations.gui_bounce_out(self.settings_node, 0.1)
+  animations.gui_bounce_out(self.version_node, 0.1, function ()
+    msg.post("controller", constants.TRANSITION_FINISHED)
+    msg.post(".", constants.DISABLE)
+  end)
+end
 
 function init(self)
   msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
@@ -23,6 +44,14 @@ end
 
 function final()
   msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function on_message(self, message_id)
+  if message_id == constants.TRANSITION_IN then
+    transition_in(self)
+  elseif message_id == constants.TRANSITION_OUT then
+    transition_out(self)
+  end
 end
 
 function on_input(self, action_id, action)

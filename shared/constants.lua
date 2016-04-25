@@ -61,9 +61,13 @@ M.RELEASE_CAMERA_FOCUS = hash("release_camera_focus")
 M.SET_CAMERA           = hash("set_camera")
 
 -- Custom messages.
-M.SWITCH_SCREEN = hash("switch_screen")
+M.SWITCH_SCREEN       = hash("switch_screen")
+M.TRANSITION_IN       = hash("transition_in")
+M.TRANSITION_OUT      = hash("transition_out")
+M.TRANSITION_FINISHED = hash("transition_finished")
 
 -- Input.
+M.BACK         = hash("back")
 M.CLICK        = hash("click")
 M.TOGGLE_DEBUG = hash("toggle_debug")
 

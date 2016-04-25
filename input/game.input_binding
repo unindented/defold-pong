@@ -2,6 +2,10 @@ key_trigger {
   input: KEY_D
   action: "toggle_debug"
 }
+key_trigger {
+  input: KEY_BACKSPACE
+  action: "back"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "click"

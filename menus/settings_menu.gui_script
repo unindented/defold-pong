@@ -1,8 +1,23 @@
 -- vi:filetype=lua
 
 local constants = require "shared.constants"
+local animations = require "shared.animations"
 
 local back_text = "BACK TO MAIN MENU"
+
+local function transition_in(self)
+  msg.post(".", constants.ENABLE)
+  animations.gui_bounce_in(self.back_node, 0.1, function ()
+    msg.post("controller", constants.TRANSITION_FINISHED)
+  end)
+end
+
+local function transition_out(self)
+  animations.gui_bounce_out(self.back_node, 0.1, function ()
+    msg.post("controller", constants.TRANSITION_FINISHED)
+    msg.post(".", constants.DISABLE)
+  end)
+end
 
 function init(self)
   msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
@@ -14,6 +29,14 @@ end
 
 function final()
   msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function on_message(self, message_id)
+  if message_id == constants.TRANSITION_IN then
+    transition_in(self)
+  elseif message_id == constants.TRANSITION_OUT then
+    transition_out(self)
+  end
 end
 
 function on_input(self, action_id, action)

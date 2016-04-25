@@ -1,31 +1,71 @@
 -- vi:filetype=lua
 
 local constants = require "shared.constants"
+local fsm = require "shared.fsm"
 
-local function toggle_screen(target_screen, current_screen)
-  msg.post(target_screen, target_screen == current_screen and constants.ENABLE or constants.DISABLE)
+local function transition_in_screen(_, _, _, to)
+  msg.post(to, constants.TRANSITION_IN)
 end
 
-function init()
+local function transition_out_screen(_, _, from)
+  msg.post(from, constants.TRANSITION_OUT)
+  return fsm.DEFERRED
+end
+
+local function create_navigation()
+  return fsm.create({
+    initial = {state = "main_menu", event = "show_main_menu", defer = true},
+    events = {
+      {name = "show_main_menu",     from = "*",             to = "main_menu"    },
+      {name = "show_settings_menu", from = "*",             to = "settings_menu"},
+      {name = "back",               from = "settings_menu", to = "main_menu"    },
+      {name = "back",               from = "main_menu"                          }
+    },
+    callbacks = {
+      on_enter_main_menu     = transition_in_screen,
+      on_leave_main_menu     = transition_out_screen,
+      on_enter_settings_menu = transition_in_screen,
+      on_leave_settings_menu = transition_out_screen
+    }
+  })
+end
+
+function init(self)
   msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
 
-  msg.post("main_menu", constants.ENABLE)
+  -- State machine controlling screen navigation.
+  self.navigation = create_navigation()
+
+  -- Disable all screens.
+  msg.post("main_menu", constants.DISABLE)
   msg.post("settings_menu", constants.DISABLE)
+
+  -- Show main menu.
+  self.navigation.show_main_menu()
 end
 
 function final()
   msg.post(".", constants.RELEASE_INPUT_FOCUS)
 end
 
-function on_message(_, message_id, message)
+function on_message(self, message_id, message)
   if message_id == constants.SWITCH_SCREEN then
-    toggle_screen("main_menu", message.screen)
-    toggle_screen("settings_menu", message.screen)
+    if not self.navigation.is_pending() then
+      self.navigation["show_" .. message.screen]()
+    end
+  elseif message_id == constants.TRANSITION_FINISHED then
+    if self.navigation.is_pending() then
+      self.navigation.confirm()
+    end
   end
 end
 
-function on_input(_, action_id, action)
-  if action_id == constants.TOGGLE_DEBUG and action.released then
+function on_input(self, action_id, action)
+  if action_id == constants.BACK and action.released then
+    if not self.navigation.is_pending() then
+      self.navigation.back()
+    end
+  elseif action_id == constants.TOGGLE_DEBUG and action.released then
     msg.post("@system:", constants.TOGGLE_PROFILE)
   end
 end
