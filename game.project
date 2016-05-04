@@ -5,6 +5,7 @@ copyright = Copyright © 2016 Daniel Perez Alvarez. All rights reserved.
 
 [bootstrap]
 main_collection = /main/main.collectionc
+render = /render/custom.renderc
 
 [input]
 game_binding = /input/game.input_bindingc

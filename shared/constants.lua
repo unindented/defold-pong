@@ -65,6 +65,13 @@ M.SWITCH_SCREEN       = hash("switch_screen")
 M.TRANSITION_IN       = hash("transition_in")
 M.TRANSITION_OUT      = hash("transition_out")
 M.TRANSITION_FINISHED = hash("transition_finished")
+M.PADDLE_LEFT_SCORED = hash("paddle_left_scored")
+M.PADDLE_RIGHT_SCORED = hash("paddle_right_scored")
+M.RESET_BALL_RANDOM = hash("reset_ball_random")
+M.RESET_BALL_LEFT = hash("reset_ball_left")
+M.RESET_BALL_RIGHT = hash("reset_ball_right")
+M.UPDATE_SCORE_LEFT = hash("update_score_left")
+M.UPDATE_SCORE_RIGHT = hash("update_score_right")
 
 -- IDs.
 M.BALL          = hash("/ball")

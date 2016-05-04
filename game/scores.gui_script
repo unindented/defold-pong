@@ -1,0 +1,41 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+local animations = require "shared.animations"
+
+local function update_score(node, value)
+  gui.set_text(node, tostring(value))
+end
+
+local function transition_in(self)
+  msg.post(".", constants.ENABLE)
+  animations.gui_fade_in(self.net, 0.5)
+  animations.gui_fade_in(self.score_left, 0.6)
+  animations.gui_fade_in(self.score_right, 0.7)
+end
+
+local function transition_out(self)
+  animations.gui_fade_out(self.net, 0.1)
+  animations.gui_fade_out(self.score_left, 0.1)
+  animations.gui_fade_out(self.score_right, 0.1, function ()
+    msg.post(".", constants.DISABLE)
+  end)
+end
+
+function init(self)
+  self.net = gui.get_node("net")
+  self.score_left = gui.get_node("score_left")
+  self.score_right = gui.get_node("score_right")
+end
+
+function on_message(self, message_id, message)
+  if message_id == constants.UPDATE_SCORE_LEFT then
+    update_score(self.score_left, message.value)
+  elseif message_id == constants.UPDATE_SCORE_RIGHT then
+    update_score(self.score_right, message.value)
+  elseif message_id == constants.TRANSITION_IN then
+    transition_in(self)
+  elseif message_id == constants.TRANSITION_OUT then
+    transition_out(self)
+  end
+end

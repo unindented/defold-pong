@@ -49,8 +49,6 @@ end
 function init(self)
   self.correction = vmath.vector3()
   self.velocity = vmath.vector3()
-
-  reset(self)
 end
 
 function update(self, dt)
@@ -63,13 +61,21 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message)
-  if message_id == constants.TRIGGER_RESPONSE
+  if message_id == constants.RESET_BALL_RANDOM then
+    reset(self)
+  elseif message_id == constants.RESET_BALL_LEFT then
+    reset(self, constants.LEFT_UNIT)
+  elseif message_id == constants.RESET_BALL_RIGHT then
+    reset(self, constants.RIGHT_UNIT)
+  elseif message_id == constants.TRIGGER_RESPONSE
   and message.enter then
-    -- Player scored, so reset the ball.
+    -- Player scored, so stop the ball...
+    reset_velocity(self)
+    -- ... and notify the controller.
     if message.other_id == constants.TRIGGER_LEFT then
-      reset(self, constants.LEFT_UNIT)
+      msg.post("controller", constants.PADDLE_RIGHT_SCORED)
     elseif message.other_id == constants.TRIGGER_RIGHT then
-      reset(self, constants.RIGHT_UNIT)
+      msg.post("controller", constants.PADDLE_LEFT_SCORED)
     end
   elseif message_id == constants.CONTACT_POINT_RESPONSE
   and message.distance > 0 then
