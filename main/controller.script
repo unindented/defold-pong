@@ -20,6 +20,10 @@ local function unload_proxy(_, _, from)
   msg.post("#" .. from, constants.UNLOAD)
 end
 
+local function set_time_step(screen, time_step)
+  msg.post("#" .. screen, constants.SET_TIME_STEP, {factor = time_step, mode = 0})
+end
+
 local function create_navigation()
   return fsm.create({
     initial = {state = "main_menu", event = "show_main_menu", defer = true},
@@ -44,6 +48,9 @@ end
 
 function init(self)
   msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
+
+  -- Set time step to default.
+  self.time_step = 1
 
   -- State machine controlling screen navigation.
   self.navigation = create_navigation()
@@ -79,6 +86,12 @@ function on_input(self, action_id, action)
     if not self.navigation.is_pending() then
       self.navigation.back()
     end
+  elseif action_id == constants.INCREASE_TIME_STEP and action.repeated then
+    self.time_step = self.time_step + 0.1
+    set_time_step("game", self.time_step)
+  elseif action_id == constants.DECREASE_TIME_STEP and action.repeated then
+    self.time_step = self.time_step - 0.1
+    set_time_step("game", self.time_step)
   elseif action_id == constants.TOGGLE_DEBUG and action.released then
     msg.post("@system:", constants.TOGGLE_PROFILE)
   end

@@ -72,6 +72,8 @@ M.RESET_BALL_LEFT = hash("reset_ball_left")
 M.RESET_BALL_RIGHT = hash("reset_ball_right")
 M.UPDATE_SCORE_LEFT = hash("update_score_left")
 M.UPDATE_SCORE_RIGHT = hash("update_score_right")
+M.INCREASE_TIME_STEP = hash("increase_time_step")
+M.DECREASE_TIME_STEP = hash("decrease_time_step")
 
 -- IDs.
 M.BALL          = hash("/ball")

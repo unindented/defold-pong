@@ -3,6 +3,14 @@ key_trigger {
   action: "toggle_debug"
 }
 key_trigger {
+  input: KEY_RBRACKET
+  action: "increase_time_step"
+}
+key_trigger {
+  input: KEY_LBRACKET
+  action: "decrease_time_step"
+}
+key_trigger {
   input: KEY_BACKSPACE
   action: "back"
 }
