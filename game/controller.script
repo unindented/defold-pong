@@ -10,6 +10,7 @@ local function transition_in()
   animations.go_bounce_in("paddle_left#sprite", 0.3)
   animations.go_bounce_in("paddle_right#sprite", 0.4)
   animations.go_bounce_in("ball#sprite", 0.5)
+  msg.post("result", constants.DISABLE)
   msg.post("scores", constants.TRANSITION_IN)
   msg.post("ball", constants.RESET_BALL_RANDOM)
 end
@@ -20,6 +21,7 @@ local function transition_out()
   animations.go_bounce_out("paddle_left#sprite", 0.3)
   animations.go_bounce_out("paddle_right#sprite", 0.4)
   animations.go_bounce_out("ball#sprite", 0.5)
+  msg.post("result", constants.TRANSITION_OUT)
   msg.post("scores", constants.TRANSITION_OUT, function ()
     msg.post(".", constants.DISABLE)
   end)
@@ -36,11 +38,19 @@ function on_message(self, message_id)
   if message_id == constants.PADDLE_LEFT_SCORED then
     self.score_left = self.score_left + 1
     msg.post("scores", constants.UPDATE_SCORE_LEFT, {value = self.score_left})
-    msg.post("ball", constants.RESET_BALL_RIGHT)
+    if self.score_left >= constants.MAX_SCORE then
+      msg.post("result", constants.TRANSITION_IN)
+    else
+      msg.post("ball", constants.RESET_BALL_RIGHT)
+    end
   elseif message_id == constants.PADDLE_RIGHT_SCORED then
     self.score_right = self.score_right + 1
     msg.post("scores", constants.UPDATE_SCORE_RIGHT, {value = self.score_right})
-    msg.post("ball", constants.RESET_BALL_LEFT)
+    if self.score_right >= constants.MAX_SCORE then
+      msg.post("result", constants.TRANSITION_IN)
+    else
+      msg.post("ball", constants.RESET_BALL_LEFT)
+    end
   elseif message_id == constants.TRANSITION_IN then
     transition_in()
   elseif message_id == constants.TRANSITION_OUT then

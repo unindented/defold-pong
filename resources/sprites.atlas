@@ -10,6 +10,9 @@ images {
 images {
   image: "/resources/net.png"
 }
+images {
+  image: "/resources/result.png"
+}
 margin: 2
 extrude_borders: 0
 inner_padding: 0

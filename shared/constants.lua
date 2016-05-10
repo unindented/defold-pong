@@ -65,15 +65,15 @@ M.SWITCH_SCREEN       = hash("switch_screen")
 M.TRANSITION_IN       = hash("transition_in")
 M.TRANSITION_OUT      = hash("transition_out")
 M.TRANSITION_FINISHED = hash("transition_finished")
-M.PADDLE_LEFT_SCORED = hash("paddle_left_scored")
+M.PADDLE_LEFT_SCORED  = hash("paddle_left_scored")
 M.PADDLE_RIGHT_SCORED = hash("paddle_right_scored")
-M.RESET_BALL_RANDOM = hash("reset_ball_random")
-M.RESET_BALL_LEFT = hash("reset_ball_left")
-M.RESET_BALL_RIGHT = hash("reset_ball_right")
-M.UPDATE_SCORE_LEFT = hash("update_score_left")
-M.UPDATE_SCORE_RIGHT = hash("update_score_right")
-M.INCREASE_TIME_STEP = hash("increase_time_step")
-M.DECREASE_TIME_STEP = hash("decrease_time_step")
+M.RESET_BALL_RANDOM   = hash("reset_ball_random")
+M.RESET_BALL_LEFT     = hash("reset_ball_left")
+M.RESET_BALL_RIGHT    = hash("reset_ball_right")
+M.UPDATE_SCORE_LEFT   = hash("update_score_left")
+M.UPDATE_SCORE_RIGHT  = hash("update_score_right")
+M.INCREASE_TIME_STEP  = hash("increase_time_step")
+M.DECREASE_TIME_STEP  = hash("decrease_time_step")
 
 -- IDs.
 M.BALL          = hash("/ball")
@@ -99,6 +99,7 @@ M.BALL_ACCELERATION = 1.1
 M.PADDLE_SPEED      = 160
 M.RESET_ANGLE       = math.pi / 4
 M.RESET_DELAY       = 1.5
+M.MAX_SCORE         = 5
 
 -- Misc.
 M.LEFT_UNIT     = vmath.vector3(-1, 0, 0)

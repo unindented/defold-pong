@@ -1,0 +1,67 @@
+-- vi:filetype=lua
+
+local constants = require "shared.constants"
+local animations = require "shared.animations"
+
+local left_won_text = "LEFT PLAYER WON!"
+local play_text = "PLAY AGAIN"
+local back_text = "BACK TO MAIN MENU"
+
+local function transition_in(self)
+  msg.post(".", constants.ENABLE)
+  animations.gui_fade_in(self.background_node, 0.1)
+  animations.gui_bounce_in(self.result_node, 0.6)
+  animations.gui_bounce_in(self.play_node, 0.7)
+  animations.gui_bounce_in(self.back_node, 0.8)
+end
+
+local function transition_out(self)
+  animations.gui_bounce_out(self.result_node, 0.1)
+  animations.gui_bounce_out(self.play_node, 0.1)
+  animations.gui_bounce_out(self.back_node, 0.1)
+  animations.gui_fade_out(self.background_node, 0.6, function ()
+    msg.post(".", constants.DISABLE)
+  end)
+end
+
+function init(self)
+  msg.post(".", constants.ACQUIRE_INPUT_FOCUS)
+
+  self.background_node = gui.get_node("background")
+  self.result_node = gui.get_node("result")
+  self.play_node = gui.get_node("play")
+  self.back_node = gui.get_node("back")
+
+  gui.set_text(self.result_node, left_won_text)
+  gui.set_text(self.play_node, play_text)
+  gui.set_text(self.back_node, back_text)
+end
+
+function final()
+  msg.post(".", constants.RELEASE_INPUT_FOCUS)
+end
+
+function on_message(self, message_id)
+  if message_id == constants.TRANSITION_IN then
+    transition_in(self)
+  elseif message_id == constants.TRANSITION_OUT then
+    transition_out(self)
+  end
+end
+
+function on_input(self, action_id, action)
+  if action_id == constants.CLICK and action.pressed then
+    local x = action.x
+    local y = action.y
+
+    if gui.pick_node(self.play_node, x, y) then
+      msg.post("game:/controller", constants.INIT)
+    elseif gui.pick_node(self.back_node, x, y) then
+      msg.post("main:/controller", constants.SWITCH_SCREEN, {screen = "main_menu"})
+    end
+  end
+
+  -- As long as we're listening to input, we're gonna consume it. This disables
+  -- game controls while the GUI is showing.
+  return true
+end
